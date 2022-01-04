@@ -36,13 +36,13 @@ class App extends React.Component {
             }
 
           })
-          console.log(this.state.currentUser, 'Current user')
+
         });
 
 
       } else {
         this.setState({ currentUser: userAuth })
-        console.log(this.state.currentUser, 'else set to auth')
+
       }
 
     })
@@ -50,7 +50,7 @@ class App extends React.Component {
   //when the user logs out the lifecycle method calls unsubscribe to set the state back to null.
   componentWillUnmount() {
     this.unsubscribeFromAuth();
-    console.log(this.state.currentUser, 'unmounted currentuser')
+
 
   }
 

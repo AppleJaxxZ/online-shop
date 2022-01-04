@@ -20,7 +20,10 @@ class SignUp extends React.Component {
         event.preventDefault();
 
         const { displayName, email, password, confirmPassword } = this.state;
-
+        if (password.length < 6) {
+            alert("Password must contain at least 6 characters.")
+            return;
+        }
         if (password !== confirmPassword) {
             alert("Passwords don't match")
             return;
