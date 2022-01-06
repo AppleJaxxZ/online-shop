@@ -13,6 +13,8 @@
     font-weight: bolder;
     border: none;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
   
     &:hover {
       background-color: white;
@@ -36,7 +38,8 @@
 
       &:hover {
         background-color: black;
-        color: white
+        color: white;
+        border: none;
       }
     }
   }
