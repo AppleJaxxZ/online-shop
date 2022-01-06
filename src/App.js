@@ -12,53 +12,53 @@ import { doc, onSnapshot } from 'firebase/firestore'
 import { createUserProfileDocument, auth, firestore } from './firebase/firebase.utils'
 import { setCurrentUser } from './redux/user/user.actions';
 class App extends React.Component {
-  //what the state will change back to when the user logsout
-  unsubscribeFromAuth = null
+  unsubscribeFromAuth = null;
 
-  //when the user logs in, the current user state is set to the current user.
   componentDidMount() {
-
     const { setCurrentUser } = this.props;
+
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
-
       if (userAuth) {
-        console.log(userAuth, "Top of if statement userAuth")
+        const userRef = await createUserProfileDocument(userAuth);
+        console.log(userRef)
 
-        await createUserProfileDocument(userAuth)
-
-        onSnapshot(doc(firestore, "users", userAuth.uid), (doc) => {
-
+        userRef.onSnapshot(snapShot => {
           setCurrentUser({
-            id: doc.id,
-            ...doc.data()
-          })
-          console.log(this.props.currentUser)
+            id: snapShot.id,
+            ...snapShot.data()
+          });
+
         });
-
-
-      } else {
-        setCurrentUser({ userAuth })
-
       }
 
-    })
+      setCurrentUser(userAuth);
+
+    });
+
   }
-  //when the user logs out the lifecycle method calls unsubscribe to set the state back to null.
+
   componentWillUnmount() {
     this.unsubscribeFromAuth();
-
-
   }
 
   render() {
     return (
       <div>
         <Header />
-
         <Switch>
           <Route exact path='/' component={HomePage} />
           <Route path='/shop' component={ShopPage} />
-          <Route path='/signin' render={() => this.props.currentUser ? (<Redirect to="/" />) : (<SignInAndSignUpPage />)} />
+          <Route
+            exact
+            path='/signin'
+            render={() =>
+              this.props.currentUser ? (
+                <Redirect to='/' />
+              ) : (
+                <SignInAndSignUpPage />
+              )
+            }
+          />
         </Switch>
       </div>
     );
