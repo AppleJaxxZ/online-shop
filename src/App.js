@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import './App.css';
@@ -14,21 +14,25 @@ import { setCurrentUser } from './redux/user/user.actions';
 class App extends React.Component {
   //what the state will change back to when the user logsout
   unsubscribeFromAuth = null
+
   //when the user logs in, the current user state is set to the current user.
   componentDidMount() {
+
     const { setCurrentUser } = this.props;
-    this.unSubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
 
       if (userAuth) {
+        console.log(userAuth, "Top of if statement userAuth")
 
         await createUserProfileDocument(userAuth)
 
         onSnapshot(doc(firestore, "users", userAuth.uid), (doc) => {
+
           setCurrentUser({
             id: doc.id,
             ...doc.data()
           })
-
+          console.log(this.props.currentUser)
         });
 
 
@@ -54,17 +58,23 @@ class App extends React.Component {
         <Switch>
           <Route exact path='/' component={HomePage} />
           <Route path='/shop' component={ShopPage} />
-          <Route path='/signin' component={SignInAndSignUpPage} />
+          <Route path='/signin' render={() => this.props.currentUser ? (<Redirect to="/" />) : (<SignInAndSignUpPage />)} />
         </Switch>
       </div>
     );
   }
 }
+
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser
+})
+
+
 //the 2nd argument which is a function that gets the dispatch property that takes an object ACTION that goes
 //to a function 
 const mapDispatchToProps = dispatch => ({
   //action and action payload goes to dispatch function which invokes the setCurrentUser action with a user payload.
   setCurrentUser: user => dispatch(setCurrentUser(user))
 })
-//null is first when we dont need to mapStateToProps
-export default connect(null, mapDispatchToProps)(App);
+//null is first when we dont need to MSTP
+export default connect(mapStateToProps, mapDispatchToProps)(App);
