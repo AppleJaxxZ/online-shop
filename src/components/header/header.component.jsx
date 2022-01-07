@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { auth } from '../../firebase/firebase.utils';
 
+import { createStructuredSelector } from 'reselect'
+
 import { ReactComponent as Logo } from '../../assets/crown.svg';
 import CartIcon from '../cart-icon/cart-icon.component';
 import CartDropdown from '../cart-dropdown/cart-dropdown.component';
-
+import { selectCartHidden } from '../../redux/cart/cart.selectors';
+import { selectCurrentUser } from '../../redux/user/user.selector';
 import './header.styles.scss';
 
 
@@ -35,10 +38,10 @@ const Header = ({ currentUser, hidden }) => {
 
 //map state to props sends the state form our root-reducer, ( here user) and gives the props in Header
 //the new state from currentUser.  check the root reducer to see why state.user.currentUser is set.
-const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({
+const mapStateToProps = createStructuredSelector({
     //current user property that has a state of user.currentUser value;
-    currentUser,
-    hidden
+    currentUser: selectCurrentUser,
+    hidden: selectCartHidden
 })
 
 export default connect(mapStateToProps)(Header);
