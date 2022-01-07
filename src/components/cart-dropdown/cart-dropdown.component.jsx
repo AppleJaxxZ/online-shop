@@ -15,7 +15,7 @@ const CartDropdown = ({ cartItems, history, dispatch }) => (
                 :
                 (<span className='empty-message'>Your cart is empty</span>)
             }
-        </div>to
+        </div>
         <CustomButton onClick={() => { history.push('/checkout'); dispatch(toggleCartHidden()) }}>GO TO CHECKOUT</CustomButton>
     </div>
 )
